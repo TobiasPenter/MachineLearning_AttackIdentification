@@ -1,4 +1,4 @@
-# Levaraging Machine Learning to Identify Active APTs in a Network
+# Levaraging Machine Learning to Identify Types of Attacks witin in a Network
 
 ## About this Project
-The aim of this project is to create a pair of machine learning models: one of thes models will be used to identify the type of malicious activity going on in the network and the other will be used to identify the most likely APT groups to be responsible for this activity. My hope is that this software could then be used by CTI analysts to pinpoint where the best areas for them to research would be and create more usefull rules for a SOC team to respond to which will help lower analyst and alert fatigue within both teams.
+The aim of this project is to create a machine learning model that will be capable of identifying what type of attack/attacks are present within a pcap file that has been entered into the software. If this research project is successful, I hope that this approach can be addapted to live network traffic streams and help greatly with keeping a network secure for a SOC (Security Opperation Center) team as well as giving insight into the attacks on a network for a CTI (Cyber Threat Intelligence) team.
