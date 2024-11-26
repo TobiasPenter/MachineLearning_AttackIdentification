@@ -7,3 +7,7 @@ The aim of this project is to create a machine learning model that will be capab
 User Story Mapping: [https://trello.com/b/j87DzWWK/user-story-mapping](https://trello.com/b/j87DzWWK/user-story-mapping)
 
 Project Backlog: [https://trello.com/b/WNkxi5IH/project-backlog](https://trello.com/b/WNkxi5IH/project-backlog)
+
+# References
+## Data Set
+[Sarhan, M., Layeghy, S. and Portmann, M., 2023. NF-UNSW-NB15-v2.](https://espace.library.uq.edu.au/view/UQ:ffbb0c1)
