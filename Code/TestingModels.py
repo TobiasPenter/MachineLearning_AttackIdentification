@@ -2,7 +2,6 @@ import random
 import numpy as np
 import pandas as pandas
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, precision_score, r2_score, recall_score
 import pickle
 
@@ -19,16 +18,15 @@ target = trainingData['Attack'].values.astype(float)
 # Data split
 input_training, input_test, target_training, target_test = train_test_split(input, target, test_size=0.2, random_state=42)
 
-# Not using an Random Forest for project but it is being used as a test
-rfcAttack = RandomForestClassifier(n_estimators=70, max_depth=80, bootstrap=True, min_samples_split=2, min_samples_leaf=1, random_state=42)
-rfcAttack.fit(input_training, target_training)
+#Load Model
+model_For_Testing = pickle.load(open('Models/rfcAttackModel.pk1', 'rb'))
 
 AllPredictions= []
 AllAttacks = []
 
-#Test model and generate statistics
+#Test the model and give statistics
 for i in range(5):
-    attackPrediction = rfcAttack.predict(input_test)
+    attackPrediction = model_For_Testing.predict(input_test)
     AllPredictions.append(attackPrediction)
     AllAttacks.append(target_test)
     
@@ -42,12 +40,11 @@ for i in range(5):
     
     print("Accuracy Score: ",accuracy,"\nPrecision Score: ", precision,"\nRecall Score:", recall,"\nF1 Score: ", f1,"\nMean Square Error: ", errorMean,"\nMean Absolute Error: ", errorAbsolute,"\nR2 Score: ",r2, "\n\n\n")    
     
-    old_test_input = input_test
-    old_test_target = target_test
+    #Resplit data
     ran_state_val = random.randint(30, 70)
     input_training, input_test, target_training, target_test = train_test_split(input, target, test_size=0.2, random_state=ran_state_val)
-    
-#Overall statistics
+   
+#Overall statistics 
 AllAttacks = np.concatenate(AllAttacks, axis=0)
 AllPredictions = np.concatenate(AllPredictions, axis=0)
 
@@ -60,6 +57,3 @@ errorAbsolute = mean_absolute_error(AllAttacks, AllPredictions)
 r2 = r2_score(AllAttacks, AllPredictions)
 
 print("Total Accuracy Score: ",accuracy,"\nTotal Precision Score: ", precision,"\nTotal Recall Score:", recall,"\nTotal F1 Score: ", f1,"\nTotal Mean Square Error: ", errorMean,"\nTotal Mean Absolute Error: ", errorAbsolute,"\nTotal R2 Score: ",r2)
-
-#Save model
-pickle.dump(rfcAttack, open("Models/rfcAttackModel.pk1", 'wb'))
