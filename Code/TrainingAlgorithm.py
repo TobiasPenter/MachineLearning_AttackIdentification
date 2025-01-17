@@ -5,6 +5,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, mean_absolute_error, mean_squared_error, precision_score, r2_score, recall_score
 import pickle
+import shap
+import matplotlib.pyplot as plt
+import matplotlib.backends.backend_agg as agg
 
 # Load data
 trainingData = pandas.read_csv("Data for ML/trainingData.csv")
@@ -12,7 +15,7 @@ trainingData = pandas.read_csv("Data for ML/trainingData.csv")
 trainingData = pandas.DataFrame(trainingData.values, columns=trainingData.columns)
 
 # Define the inputs and targets
-trainingData = trainingData.sample(n=200000, random_state=42)
+trainingData = trainingData.sample(n=20000, random_state=42)
 input = trainingData.drop(['IPV4_SRC_ADDR', 'IPV4_DST_ADDR','Label', 'Attack'], axis=1)
 target = trainingData['Attack'].values.astype(float)
 
@@ -63,3 +66,44 @@ print("Total Accuracy Score: ",accuracy,"\nTotal Precision Score: ", precision,"
 
 #Save model
 pickle.dump(rfcAttack, open("Models/rfcAttackModel.pk1", 'wb'))
+
+#Initialise shap plot
+shap.initjs()
+
+#Make explainer
+explainer = shap.TreeExplainer(rfcAttack)
+
+shap_values = explainer.shap_values(input_test)
+
+print(shap_values.shape)
+
+shap_values = np.transpose(shap_values, (2,0,1))
+
+print(shap_values.shape)
+
+#Shape values for each class
+for i, class_shap_values in enumerate(shap_values):
+    print(class_shap_values.shape)
+    print(input_test.shape)
+    print(f"Generating summary plot for class {i}")
+    summary_plot = shap.summary_plot(class_shap_values, input_test, feature_names=input_test.columns, show=False)
+    
+    fig = plt.gcf()
+
+    # Use agg backend to save it as PNG
+    png_file_path = f"Explainer Charts/Summary/On Build/Model 1/shap_plot_class{i}.png"
+    agg_backend = agg.FigureCanvasAgg(fig)
+    agg_backend.print_png(png_file_path)
+
+    # Optionally close the figure to avoid memory issues
+    plt.close(fig)
+
+for j in range (10):
+    instance = random.randint(0, len(input_test) - 1)
+
+    for i, class_shap_values in enumerate(shap_values):  
+        shap_instance = class_shap_values[instance]
+        print(f"Generating plot for instance {instance}, class {i}")
+        force_plot = shap.force_plot(explainer.expected_value[i], shap_instance, input_test.iloc[instance].values, feature_names=input_test.columns, show=False)
+
+        shap.save_html(f"Explainer Charts/Instances/On Build/Model 1/Iteration {j}/shap_plot_class{i}_instance{instance}.html", force_plot)
